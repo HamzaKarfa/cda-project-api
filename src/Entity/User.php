@@ -19,7 +19,9 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
       normalizationContext:["groups"=>["read:user:item"]],
       denormalizationContext:["groups"=>["write:user:item"]],
       collectionOperations:[
-        'get',
+        'get'=>[
+            'pagination_enabled'=>false,
+        ],
         'post'
       ],
       itemOperations:[
@@ -60,7 +62,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      *
      */
     #[
-        Groups(['write:user:item']),
+        Groups(['write:user:item'],['read:user:item']),
         SerializedName('password')
     ]
     private $plainPassword;
