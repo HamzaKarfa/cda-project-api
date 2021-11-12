@@ -7,12 +7,28 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
  */
-#[ApiResource]
+#[
+    ApiResource(
+      normalizationContext:["groups"=>["read:user:item"]],
+      denormalizationContext:["groups"=>["write:user:item"]],
+      collectionOperations:[
+        'get',
+        'post'
+      ],
+      itemOperations:[
+        'put',
+        'delete',
+        'get'
+    ]
+    ),
+]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     /**
@@ -20,20 +36,34 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
+    #[Groups(['read:user:item'])]
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      */
+    #[Groups(['read:user:item','write:user:item'])]
     private $email;
     /**
      * @ORM\Column(type="string", length=255)
      */
+    #[Groups(['read:user:item','write:user:item'])]
     private $username;
     /**
      * @ORM\Column(type="json")
      */
+    #[Groups(['read:user:item'])]
     private $roles = [];
+
+    /**
+     * @Groups("user:write")
+     *
+     */
+    #[
+        Groups(['write:user:item']),
+        SerializedName('password')
+    ]
+    private $plainPassword;
 
     /**
      * @var string The hashed password
@@ -81,13 +111,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
-
         return array_unique($roles);
     }
-
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;
+
+        return $this;
+    }
+
+    public function getPlainPassword(): string
+    {
+        return $this->plainPassword;
+    }
+    public function setPlainPassword(string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
 
         return $this;
     }
@@ -131,7 +170,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials()
     {
         // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
+        $this->plainPassword = null;
     }
 
 }

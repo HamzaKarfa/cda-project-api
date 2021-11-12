@@ -25,13 +25,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
                 'path' => '/categories',
                 'controller' => GetCategoryController::class,
                 'read' => false,
-            ]
+            ],
+            'post'
         ],
         itemOperations:[
-            'get'=>[
-                'read' => false,
-                'output' => false,
-            ]
+            'put',
+            'delete',
+            'get'=>['normalization_context'=>['groups'=>['read:categories:items']]],
         ]
     )
 ]
@@ -42,31 +42,31 @@ class Category
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    #[Groups(['read:product:collection','read:categories:collection','read:sub_categories:collection'])]
+    #[Groups(['read:product:collection','read:categories:collection','read:sub_categories:collection','read:categories:items'])]
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    #[Groups(['read:product:collection','read:categories:collection','read:sub_categories:collection'])]
+    #[Groups(['read:product:collection','read:categories:collection','read:sub_categories:collection','read:categories:items'])]
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    #[Groups(['read:product:collection','read:categories:collection','read:sub_categories:collection'])]
+    #[Groups(['read:product:collection','read:categories:collection','read:sub_categories:collection','read:categories:items'])]
     private $image;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    #[Groups(['read:product:collection','read:categories:collection','read:sub_categories:collection'])]
+    #[Groups(['read:product:collection','read:categories:collection','read:sub_categories:collection','read:categories:items'])]
     private $description;
 
     /**
      * @ORM\OneToMany(targetEntity=SubCategory::class, mappedBy="category", orphanRemoval=true)
      */
-    #[Groups(['read:categories:collection','read:sub_categories:collection'])]
+    #[Groups(['read:categories:collection','read:categories:items'])]
     private $subCategories;
 
     public function __construct()

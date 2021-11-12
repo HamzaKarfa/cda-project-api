@@ -31,7 +31,6 @@ class ZProductFixtures extends Fixture
                         ->setCreatedAt(new \DateTime())
                         ->setUpdatedAt(new \DateTime());
                 
-                dump($product);
                 $manager->persist($product);
                 $manager->flush();
             }

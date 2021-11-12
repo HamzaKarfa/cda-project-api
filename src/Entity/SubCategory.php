@@ -14,17 +14,15 @@ use Symfony\Component\Serializer\Annotation\Groups;
     ApiResource(
         collectionOperations:[
             'get'=>[
-                'filters'=>[],
                 'normalization_context'=>['groups'=>['read:sub_categories:collection']],
-                'pagination_enabled'=>false
-            ]
+                'pagination_enabled'=>false,
+            ],
+            'post'
         ],
         itemOperations:[
-            'get'=>[
-
-                'read' => false,
-                'output' => false,
-            ]
+            'put',
+            'delete',
+            'get'
         ]
     )
 ]
@@ -35,13 +33,13 @@ class SubCategory
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    #[Groups(['read:product:collection','read:sub_categories:collection', 'read:categories:collection'])]
+    #[Groups(['read:product:collection','read:sub_categories:collection', 'read:categories:collection','read:categories:items'])]
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    #[Groups(['read:product:collection','read:sub_categories:collection','read:categories:collection'])]
+    #[Groups(['read:product:collection','read:sub_categories:collection','read:categories:collection','read:categories:items'])]
     private $name;
 
     /**

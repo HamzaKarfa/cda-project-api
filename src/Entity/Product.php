@@ -15,6 +15,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
     ApiResource(
         paginationItemsPerPage:15,
         normalizationContext:['groups'=>['read:product:collection']],
+        collectionOperations:[
+            'get'=>[
+                'pagination_enabled'=>false,
+            ],
+            'post'
+        ],
         itemOperations:[
             'put'=>[
                 'denormalization_context'=> ['groups'=>['put:product:item']]

@@ -7,16 +7,14 @@ use App\Repository\SubCategoryRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpFoundation\Request;
-
 #[AsController]
 class PostProductController  extends AbstractController
 {
-    public function __construct()
+    public function __construct( )
     {
         
     }
-    public function __invoke(Request $request)
+    public function __invoke()
     {
-        dd($request->getMethod());
     }
 }
