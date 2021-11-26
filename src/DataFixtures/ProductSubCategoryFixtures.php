@@ -21,9 +21,6 @@ class ProductSubCategoryFixtures extends Fixture
     {
         $categories = $this->categoryRepository->findAll();
 
-
-
-
         $subCategoriesNames1 = [
             ['Fruits','Fruits.jpg' ],
             ['Légumes','Legumes.jpg'],

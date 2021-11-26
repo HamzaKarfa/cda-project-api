@@ -6,12 +6,26 @@ use App\Repository\OrderRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Controller\PaymentIntentController;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=OrderRepository::class)
  * @ORM\Table(name="`order`")
  */
-#[ApiResource()]
+#[ApiResource(
+    collectionOperations:[
+        'get',
+        'post'=>[
+            'denormalization_context'=>['groups'=>['write:order:item']],
+            'controller' => PaymentIntentController::class,
+        ]
+    ],
+    itemOperations:[
+        'put',
+        'get',
+    ]
+)]
 class Order
 {
     /**
@@ -19,18 +33,22 @@ class Order
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
+
+    #[Groups(['write:order:item'])]
     private $id;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class)
      * @ORM\JoinColumn(nullable=false)
      */
+    #[Groups(['write:order:item'])]
     private $user_id;
 
     /**
      * @ORM\ManyToMany(targetEntity=Product::class)
      * @ORM\JoinColumn(nullable=false)
      */
+    #[Groups(['write:order:item'])]
     private $product;
 
     public function __construct()

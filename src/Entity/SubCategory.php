@@ -33,7 +33,7 @@ class SubCategory
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    #[Groups(['read:product:collection','read:sub_categories:collection', 'read:categories:collection','read:categories:items'])]
+    #[Groups(['read:product:collection','read:sub_categories:collection', 'read:categories:collection','read:categories:items',  'write:product:item'])]
     private $id;
 
     /**

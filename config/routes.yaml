@@ -4,3 +4,7 @@
 authentication_token:
     path: /authentication_token
     methods: ['POST']
+index:
+    path: /payment_intent
+    methods: ['POST']
+    controller: App\Controller\PaymentIntentController

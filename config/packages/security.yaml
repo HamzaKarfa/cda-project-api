@@ -31,5 +31,6 @@ security:
 
     access_control:
         - { path: ^/authentication_token, roles: PUBLIC_ACCESS } # Allows accessing the Swagger UI
+        - { path: ^/payment_intent, roles: PUBLIC_ACCESS } # Allows accessing the Swagger UI
         - { path: ^/users, roles: PUBLIC_ACCESS }
         - { path: ^/, roles: PUBLIC_ACCESS }

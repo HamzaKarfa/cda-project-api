@@ -33,7 +33,6 @@ class CategoryTest extends ApiTestCase
         // This generated JSON Schema is also used in the OpenAPI spec!
         $this->assertMatchesResourceCollectionJsonSchema(Book::class);
     }
-
     public function testCreateCategory(): void
     {
         $response = static::createClient()->request('POST', 'https://cda2-devops-gael.simplon-roanne.com/categories', ['json' => [
@@ -54,4 +53,5 @@ class CategoryTest extends ApiTestCase
         $this->assertMatchesRegularExpression('~^/categories/\d+$~', $response->toArray()['@id']);
         $this->assertMatchesResourceItemJsonSchema(Book::class);
     }
+    
 }
