@@ -49,7 +49,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @ORM\Column(type="string", length=255)
      */
-    #[Groups(['read:user:item','write:user:item'])]
+    #[Groups(['read:user:item','write:user:item','write:order:item'])]
     private $username;
     /**
      * @ORM\Column(type="json")

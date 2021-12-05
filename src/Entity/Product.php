@@ -1,9 +1,8 @@
 <?php
 
 namespace App\Entity;
-
-use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\ProductRepository;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
@@ -17,11 +16,14 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
 #[
     ApiResource(
         collectionOperations:[
-            'get',
+            'get'=>[
+                'normalization_context'=> ['groups'=>[ 'read:product:collection']]
+            ],
             'post'=>[
                 'method'=>'POST',
                 'controller'=> PostProductController::class,
                 'deserialize'=>false,
+                'validate'=>false,
                 'openapi_context' => [
                     'requestBody' => [
                         'content' => [
@@ -42,8 +44,12 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
                                             'format' => 'string',
                                         ],
                                         'price' => [
-                                            'type' => 'integer',
-                                            'format' => 'integer',
+                                            'type' => 'float',
+                                            'format' => 'float',
+                                        ],
+                                        'price_type' => [
+                                            'type' => 'string',
+                                            'format' => 'string',
                                         ],
                                         'sub_categories'=>[
                                             'type' => 'integer',
@@ -64,32 +70,8 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
             ],
             'delete',
             'get'=>[
-                'normalization_context'=> ['groups'=>['read:product:collection', 'read:product:item']]
-            ],
-            // 'image'=>[
-            //     'path'=>'/products/{id}/image',
-            //     'method'=>'POST',
-            //     'deserialize'=>false,
-            //     'controller'=> PostImageController::class,
-            //     'openapi_context' => [
-            //         'requestBody' => [
-            //             'content' => [
-            //                 'multipart/form-data' => [
-            //                     'schema' => [
-            //                         'type' => 'object',
-            //                         'properties' => [
-            //                             'file' => [
-            //                                 'type' => 'string',
-            //                                 'format' => 'binary',
-            //                             ],
-            //                         ],
-            //                     ],
-            //                 ],
-            //             ],
-            //         ],
-            //     ],
-            // ],
-           
+                'normalization_context'=> ['groups'=>[ 'read:product:item']]
+            ],          
         ]
     ),
     ApiFilter(SearchFilter::class , properties: ['subCategory.name'=> 'exact', 'subCategory.category.name' => 'exact'])
@@ -101,32 +83,53 @@ class Product
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    #[Groups(['read:product:collection', 'write:order:item'])]
+    #[Groups(['read:product:collection',
+        'write:order:item',
+        'read:product:item'
+    ])]
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    #[Groups(['read:product:collection', 'put:Product', 'write:order:item', 'write:product:item'])]
+    #[Groups(['read:product:collection',
+        'write:order:item',
+        'write:product:item',
+        'read:product:item',
+        'put:product:item'
+    ])]
     private $name;
 
     /**
-     * @ORM\Column(type="float")
+     * @ORM\OneToOne(targetEntity=Price::class, inversedBy="product", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=false)
      */
-    #[Groups(['read:product:collection', 'write:order:item', 'write:product:item'])]
+    #[Groups(['read:product:collection',
+        'write:order:item',
+        'read:product:item',
+        'put:product:item'
+    ])]
     private $price;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    #[Groups(['read:product:collection','read:product:item', 'write:order:item', 'write:product:item'])]
+    #[Groups(['read:product:collection','read:product:item',
+        'write:order:item',
+        'write:product:item',
+        'put:product:item'
+    ])]
     private $origin;
 
     /**
      * @ORM\OneToOne(targetEntity=Image::class, cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=true)
      */
-    #[Groups(['write:order:item', 'write:product:item'])]
+    #[Groups(['write:order:item',
+        'write:product:item',
+        'read:product:item',
+        'read:product:collection',
+    ])]
     private $image;
     
     /**
@@ -135,7 +138,12 @@ class Product
      */
     #[
         SerializedName('sub_categories'),
-        Groups(['read:product:collection','read:subCategory', 'write:product:item'])
+        Groups(['read:product:collection',
+            'read:subCategory',
+            'write:product:item',
+            'read:product:item',
+            'put:product:item'
+        ])
     ]
     private $subCategory;
 
@@ -149,6 +157,7 @@ class Product
      * @ORM\Column(type="datetime")
      */
     private $updated_at;
+
 
 
     public function getId(): ?int
@@ -179,17 +188,6 @@ class Product
         return $this;
     }
 
-    public function getPrice(): ?float
-    {
-        return $this->price;
-    }
-
-    public function setPrice(float $price): self
-    {
-        $this->price = $price;
-
-        return $this;
-    }
 
     public function getOrigin(): ?string
     {
@@ -235,6 +233,18 @@ class Product
     public function setUpdatedAt(\DateTimeInterface $updated_at): self
     {
         $this->updated_at = $updated_at;
+
+        return $this;
+    }
+
+    public function getPrice(): ?Price
+    {
+        return $this->price;
+    }
+
+    public function setPrice(Price $price): self
+    {
+        $this->price = $price;
 
         return $this;
     }

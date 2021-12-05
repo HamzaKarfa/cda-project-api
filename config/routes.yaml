@@ -4,7 +4,11 @@
 authentication_token:
     path: /authentication_token
     methods: ['POST']
-index:
-    path: /payment_intent
+gesdinet_jwt_refresh_token:
+    path:       /authentication_token/refresh
+    methods: ['POST']
+    controller: gesdinet.jwtrefreshtoken::refresh
+payment_intent:
+    path:       /create-payment-intent
     methods: ['POST']
     controller: App\Controller\PaymentIntentController

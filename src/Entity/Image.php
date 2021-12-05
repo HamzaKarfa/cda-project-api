@@ -2,12 +2,8 @@
 
 namespace App\Entity;
 
-use App\Repository\ImageRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\HttpFoundation\File\File;
-use ApiPlatform\Core\Annotation\ApiResource;
-use App\Controller\PostImageController;
 
 /**
  * @ORM\Entity(repositoryClass=ImageRepository::class)
@@ -25,6 +21,13 @@ class Image
     /**
      * @ORM\Column(type="string", length=255)
      */
+    #[Groups(['read:product:item',
+        'read:product:collection',
+        'read:categories:collection',
+        'read:categories:item',
+        'read:sub_categories:collection',
+        'read:sub_categories:item',
+    ])]
     private $imagePath;
 
     public function getId(): ?int

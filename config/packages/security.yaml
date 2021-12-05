@@ -14,6 +14,9 @@ security:
                 property: email
 
     firewalls:
+        refresh:
+            pattern:  ^/authentication_token/refresh
+            stateless: true
         dev:
             pattern: ^/_(profiler|wdt)
             security: false
@@ -31,6 +34,7 @@ security:
 
     access_control:
         - { path: ^/authentication_token, roles: PUBLIC_ACCESS } # Allows accessing the Swagger UI
+        - { path: ^/authentication_token/refresh, roles: PUBLIC_ACCESS }
         - { path: ^/payment_intent, roles: PUBLIC_ACCESS } # Allows accessing the Swagger UI
         - { path: ^/users, roles: PUBLIC_ACCESS }
         - { path: ^/, roles: PUBLIC_ACCESS }

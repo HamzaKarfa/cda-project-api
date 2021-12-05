@@ -2,17 +2,17 @@
 
 namespace App\Controller;
 
+use DateTime;
+use App\Entity\Image;
+use App\Entity\Price;
+use App\Entity\Product;
+use App\Repository\SubCategoryRepository;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
-use App\Entity\Image;
-use App\Entity\Product;
-use App\Repository\SubCategoryRepository;
-use DateTime;
-use Symfony\Component\HttpKernel\Attribute\AsController;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 #[AsController]
 class PostProductController extends AbstractController
@@ -21,14 +21,16 @@ class PostProductController extends AbstractController
     {
         $name= $request->request->get('name');
         $origin= $request->request->get('origin');
-        $price= $request->request->get('price');
-        $subCategoryId= $request->request->get('subCategory');
+        $priceFloat= $request->request->get('price');
+        $priceType= $request->request->get('priceType');
+        $subCategoryId= $request->request->get('sub_categories');
         $uploadedFile = $request->files->get('image');
 
 
         $subCategory = $subCategoryRepository->find($subCategoryId);
         $product = new Product();
-        $Image = new Image();
+        $image = new Image();
+        $price = new Price();
         
         if (!$uploadedFile) {
             throw new BadRequestHttpException('"image" is required');
@@ -40,15 +42,18 @@ class PostProductController extends AbstractController
         // Move the file to the directory where brochures are stored
         try {
             $uploadedFile->move(
-                $this->getParameter('product_directiory'),
+                $this->getParameter('product_directory'),
                 $newFilename
             );
         } catch (FileException $e) {
             // ... handle exception if something happens during file upload
         }
 
-        $Image->setImagePath($newFilename);
-        $product->setImage($Image);
+        $image->setImagePath($request->getSchemeAndHttpHost() . '/uploads/products/' . $newFilename);
+        
+        $price->setPrice($priceFloat);
+        $price->setType($priceType);
+        $product->setImage($image);
         $product->setSubCategory($subCategory);
 
         $product->setName($name);

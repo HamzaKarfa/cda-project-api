@@ -6,7 +6,7 @@ use App\Repository\OrderRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use App\Controller\PaymentIntentController;
+use App\Controller\PostOrderController;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
@@ -18,7 +18,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
         'get',
         'post'=>[
             'denormalization_context'=>['groups'=>['write:order:item']],
-            'controller' => PaymentIntentController::class,
+            'controller' => PostOrderController::class,
         ]
     ],
     itemOperations:[

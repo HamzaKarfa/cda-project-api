@@ -1,9 +1,10 @@
 <?php
 
 namespace App\Entity;
-
-use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\SubCategoryRepository;
+use ApiPlatform\Core\Annotation\ApiResource;
+use App\Controller\PostSubCategoryController;
+use App\Controller\PutSubCategoryController;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -15,14 +16,47 @@ use Symfony\Component\Serializer\Annotation\Groups;
         collectionOperations:[
             'get'=>[
                 'normalization_context'=>['groups'=>['read:sub_categories:collection']],
-                'pagination_enabled'=>false,
             ],
-            'post'
+            'post'=>[
+                'method'=>'POST',
+                'controller'=> PostSubCategoryController::class,
+                'deserialize'=>false,
+                'validate'=>false,
+                'openapi_context' => [
+                    'requestBody' => [
+                        'content' => [
+                            'multipart/form-data' => [
+                                'schema' => [
+                                    'type' => 'object',
+                                    'properties' => [
+                                        'image' => [
+                                            'type' => 'string',
+                                            'format' => 'binary',
+                                        ],
+                                        'name' => [
+                                            'type' => 'string',
+                                            'format' => 'string',
+                                        ],
+                                        'category'=>[
+                                            'type' => 'integer',
+                                            'format' => 'integer',
+                                        ]
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ],
         itemOperations:[
-            'put',
+            'put'=>[
+                'denormalization_context'=> ['groups'=>['put:sub_categories:item']]
+            ],
             'delete',
-            'get'
+            'get'=>[
+                'normalization_context'=>['groups'=>['read:sub_categories:item']],
+            ],
         ]
     )
 ]
@@ -33,29 +67,57 @@ class SubCategory
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    #[Groups(['read:product:collection','read:sub_categories:collection', 'read:categories:collection','read:categories:items',  'write:product:item'])]
+    #[Groups(['read:product:collection',
+        'read:sub_categories:collection',
+        'read:sub_categories:item',
+        'read:categories:collection',
+        'read:categories:items',
+        'read:product:item',
+        
+    ])]
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      */
-    #[Groups(['read:product:collection','read:sub_categories:collection','read:categories:collection','read:categories:items'])]
+    #[Groups(['read:product:collection',
+        'read:sub_categories:collection',
+        'read:sub_categories:item',
+        'read:categories:collection',
+        'read:categories:items',
+        'put:sub_categories:item',
+        'read:product:item',
+
+    ])]
     private $name;
 
+    
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\OneToOne(targetEntity=Image::class, cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=true)
      */
-    #[Groups(['read:product:collection','read:sub_categories:collection','read:categories:collection'])]
+    #[Groups(['read:sub_categories:collection',
+        'read:categories:collection',
+        'read:sub_categories:item',
+    ])]
     private $image;
+
     /**
      * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="subCategories")
      * @ORM\JoinColumn(nullable=false)
      */
-    #[Groups(['read:product:collection','read:sub_categories:collection'])]
-
+    #[Groups(['read:product:collection',
+        'read:sub_categories:collection',
+        'read:sub_categories:item',
+        'put:sub_categories:item'
+    ])]
     private $category;
 
-
+    public function setId($id): self
+    {
+        $this->id = $id;
+        return $this;
+    }
     public function getId(): ?int
     {
         return $this->id;
@@ -73,15 +135,14 @@ class SubCategory
         return $this;
     }
 
-    public function getImage(): ?string
+    public function getImage(): ?Image
     {
         return $this->image;
     }
 
-    public function setImage(string $image): self
+    public function setImage( Image $image): self
     {
         $this->image = $image;
-
         return $this;
     }
 
