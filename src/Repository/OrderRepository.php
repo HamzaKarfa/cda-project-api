@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Order;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -19,28 +20,33 @@ class OrderRepository extends ServiceEntityRepository
         parent::__construct($registry, Order::class);
     }
 
-    // /**
-    //  * @return Order[] Returns an array of Order objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @return Order[] Returns an array of Order objects
+     */
+    
+    public function getAllOrder()
     {
-        return $this->createQueryBuilder('o')
-            ->andWhere('o.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('o.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        $entityManager = $this->getEntityManager();
+        $query = $entityManager->createQuery(
+            'SELECT 
+                order_oject,
+                orderProducts
+            FROM 
+                App\Entity\Order order_oject
+            JOIN
+                order_oject.orderProducts orderProducts
+            '
+        );
+        return $query->getResult();
+    
     }
-    */
+    
 
     /*
-    public function findOneBySomeField($value): ?Order
+    public function findOneBySomeField($value): ?JobOffer
     {
-        return $this->createQueryBuilder('o')
-            ->andWhere('o.exampleField = :val')
+        return $this->createQueryBuilder('j')
+            ->andWhere('j.exampleField = :val')
             ->setParameter('val', $value)
             ->getQuery()
             ->getOneOrNullResult()

@@ -14,7 +14,6 @@ use App\Security\PasswordHasher;
 class UserDataPersister implements ContextAwareDataPersisterInterface
 {
 
-
     public function __construct(
         private EntityManagerInterface $_entityManager,
         private PasswordHasher $_passwordEncoder

@@ -9,7 +9,8 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Controller\PostProductController;
 use Symfony\Component\Serializer\Annotation\SerializedName;
-
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 /**
  * @ORM\Entity(repositoryClass=ProductRepository::class)
  */
@@ -85,7 +86,9 @@ class Product
      */
     #[Groups(['read:product:collection',
         'write:order:item',
-        'read:product:item'
+        'read:product:item',
+        'read:order:collection',
+        'read:item:collection'    
     ])]
     private $id;
 
@@ -96,7 +99,9 @@ class Product
         'write:order:item',
         'write:product:item',
         'read:product:item',
-        'put:product:item'
+        'put:product:item',
+        'read:order:collection',
+        'read:item:collection'
     ])]
     private $name;
 
@@ -107,7 +112,9 @@ class Product
     #[Groups(['read:product:collection',
         'write:order:item',
         'read:product:item',
-        'put:product:item'
+        'put:product:item',
+        'read:order:collection',
+        'read:item:collection'
     ])]
     private $price;
 
@@ -117,7 +124,9 @@ class Product
     #[Groups(['read:product:collection','read:product:item',
         'write:order:item',
         'write:product:item',
-        'put:product:item'
+        'put:product:item',
+        'read:order:collection',
+        'read:item:collection'
     ])]
     private $origin;
 
@@ -129,6 +138,8 @@ class Product
         'write:product:item',
         'read:product:item',
         'read:product:collection',
+        'read:order:collection',
+        'read:item:collection'
     ])]
     private $image;
     
@@ -148,6 +159,11 @@ class Product
     private $subCategory;
 
     /**
+     * @ORM\OneToMany(targetEntity=OrderProduct::class, mappedBy="product")
+     */
+    private $orderProducts;
+
+    /**
      * @ORM\Column(type="datetime")
      */
     
@@ -158,7 +174,16 @@ class Product
      */
     private $updated_at;
 
+    public function __construct()
+    {
+        $this->orderProducts = new ArrayCollection();
+    }
 
+    public function setId(string $id): self
+    {
+        $this->id = $id;
+        return $this;
+    }
 
     public function getId(): ?int
     {
@@ -245,6 +270,37 @@ class Product
     public function setPrice(Price $price): self
     {
         $this->price = $price;
+
+        return $this;
+    }
+
+
+       /**
+     * @return Collection|OrderProduct[]
+     */
+    public function getOrderProducts(): Collection
+    {
+        return $this->orderProducts;
+    }
+
+    public function addOrderProduct(OrderProduct $orderProduct): self
+    {
+        if (!$this->orderProducts->contains($orderProduct)) {
+            $this->orderProducts[] = $orderProduct;
+            $orderProduct->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrderProduct(OrderProduct $orderProduct): self
+    {
+        if ($this->orderProducts->removeElement($orderProduct)) {
+            // set the owning side to null (unless already changed)
+            if ($orderProduct->getOrderId() === $this) {
+                $orderProduct->setProduct(null);
+            }
+        }
 
         return $this;
     }

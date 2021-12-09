@@ -24,7 +24,8 @@ class Price
     #[Groups(['read:product:collection',
         'write:order:item',
         'read:product:item',
-        'put:product:item'
+        'put:product:item',
+        'read:order:collection'
     ])]
     private $price;
 
@@ -34,7 +35,8 @@ class Price
     #[Groups(['read:product:collection',
         'write:order:item',
         'read:product:item',
-        'put:product:item'
+        'put:product:item',
+        'read:order:collection'
     ])]
     private $type;
 

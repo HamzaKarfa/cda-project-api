@@ -7,23 +7,32 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Controller\PostOrderController;
+use App\Controller\GetOrderController;
+use Doctrine\ORM\PersistentCollection;
+use Symfony\Component\Security\Core\Authentication\RememberMe\PersistentToken;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=OrderRepository::class)
  * @ORM\Table(name="`order`")
  */
+// =>[
+//     'controller' => GetOrderController::class
+// ]
 #[ApiResource(
     collectionOperations:[
-        'get',
+        'get'=>[
+            'normalization_context'=> ['groups'=>[ 'read:order:collection']]
+        ],
         'post'=>[
             'denormalization_context'=>['groups'=>['write:order:item']],
             'controller' => PostOrderController::class,
         ]
     ],
     itemOperations:[
-        'put',
-        'get',
+        'get'=>[
+            'normalization_context'=> ['groups'=>[ 'read:item:collection']]
+        ]
     ]
 )]
 class Order
@@ -34,27 +43,28 @@ class Order
      * @ORM\Column(type="integer")
      */
 
-    #[Groups(['write:order:item'])]
+    #[Groups(['write:order:item','read:order:collection','read:item:collection'])]
     private $id;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class)
      * @ORM\JoinColumn(nullable=false)
      */
-    #[Groups(['write:order:item'])]
+    #[Groups(['write:order:item','read:order:collection','read:item:collection'])]
     private $user_id;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Product::class)
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\OneToMany(targetEntity=OrderProduct::class, mappedBy="order_id", cascade={"persist"})
      */
-    #[Groups(['write:order:item'])]
-    private $product;
+    #[Groups(['write:order:item','read:order:collection','read:item:collection'])]
+    private $orderProducts;
 
     public function __construct()
     {
-        $this->product = new ArrayCollection();
+        $this->orderProducts = new ArrayCollection();
     }
+
+
 
     public function getId(): ?int
     {
@@ -74,26 +84,37 @@ class Order
     }
 
     /**
-     * @return Collection|Product[]
+     * @return OrderProduct[]
      */
-    public function getProduct(): Collection
+    public function getOrderProducts(): ArrayCollection
     {
-        return $this->product;
+        if($this->orderProducts instanceof PersistentCollection)
+        {
+            return $this->orderProducts->toArray();
+        }
+        return $this->orderProducts;
     }
 
-    public function addProduct(Product $product): self
+    public function addOrderProduct(OrderProduct $orderProduct): self
     {
-        if (!$this->product->contains($product)) {
-            $this->product[] = $product;
+        if (!$this->orderProducts->contains($orderProduct)) {
+            $this->orderProducts[] = $orderProduct;
+            $orderProduct->setOrderId($this);
         }
 
         return $this;
     }
 
-    public function removeProduct(Product $product): self
+    public function removeOrderProduct(OrderProduct $orderProduct): self
     {
-        $this->product->removeElement($product);
+        if ($this->orderProducts->removeElement($orderProduct)) {
+            // set the owning side to null (unless already changed)
+            if ($orderProduct->getOrderId() === $this) {
+                $orderProduct->setOrderId(null);
+            }
+        }
 
         return $this;
     }
+
 }

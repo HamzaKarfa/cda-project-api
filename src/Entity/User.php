@@ -38,18 +38,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
-    #[Groups(['read:user:item'])]
+    #[Groups(['read:user:item','read:order:collection'])]
     private $id;
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      */
-    #[Groups(['read:user:item','write:user:item','write:order:item'])]
+    #[Groups(['read:user:item','write:user:item','write:order:item','read:order:collection','read:item:collection'])]
     private $email;
     /**
      * @ORM\Column(type="string", length=255)
      */
-    #[Groups(['read:user:item','write:user:item','write:order:item'])]
+    #[Groups(['read:user:item','write:user:item','write:order:item','read:order:collection','read:item:collection'])]
     private $username;
     /**
      * @ORM\Column(type="json")
