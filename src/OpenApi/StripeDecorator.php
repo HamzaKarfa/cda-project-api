@@ -41,7 +41,7 @@ final class StripeDecorator implements OpenApiFactoryInterface
         $pathItem = new Model\PathItem(
             ref: 'Stripe',
             post: new Model\Operation(
-                operationId: 'postCredentialsItem',
+                operationId: 'postCredentialsItemStripe',
                 tags: ['Stripe'],
                 responses: [
                     '200' => [

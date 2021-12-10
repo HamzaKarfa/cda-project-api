@@ -37,9 +37,7 @@ class UserDataPersister implements ContextAwareDataPersisterInterface
             $hashedPassword =  $this->_passwordEncoder->hash(
                     $data->getPlainPassword(),
             );
-            if ($this->_passwordEncoder->needsRehash($hashedPassword)) {
-                $hashedPassword = $this->_passwordEncoder->hash($hashedPassword);
-            }
+   
             if ($this->_passwordEncoder->verify($hashedPassword, $data->getPlainPassword())) {
                 $data->setPassword($hashedPassword);
                 $data->eraseCredentials();

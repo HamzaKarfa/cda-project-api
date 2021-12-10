@@ -45,7 +45,7 @@ final class JwtDecorator implements OpenApiFactoryInterface
         $pathItem = new Model\PathItem(
             ref: 'JWT Token',
             post: new Model\Operation(
-                operationId: 'postCredentialsItem',
+                operationId: 'postCredentialsItemToken',
                 tags: ['Token'],
                 responses: [
                     '200' => [
