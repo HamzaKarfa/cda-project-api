@@ -81,7 +81,7 @@
             "@auto-scripts"
         ],
         "compile": [
-            "php bin/console --no-interaction doctrine:schema:create"
+            "php bin/console --no-interaction doctrine:schema:update"
         ]
     },
     "conflict": {
