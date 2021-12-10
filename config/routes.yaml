@@ -2,7 +2,7 @@
 #    path: /
 #    controller: App\Controller\DefaultController::index
 authentication_token:
-    path: /authentication_token
+    path:       /authentication_token
     methods: ['POST']
 gesdinet_jwt_refresh_token:
     path:       /authentication_token/refresh
