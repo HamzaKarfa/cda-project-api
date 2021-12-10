@@ -8,6 +8,7 @@ parameters:
    categories_directory: '%kernel.project_dir%/public/uploads/categories'
    sub_categories_directory: '%kernel.project_dir%/public/uploads/sub_categories'
    stripe_key_secret: '%env(resolve:STRIPE_SECRET_KEY)%'
+
 services:
     # default configuration for services in *this* file
     _defaults:
