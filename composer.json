@@ -81,6 +81,7 @@
             "@auto-scripts"
         ],
         "compile": [
+            "composer require symfony/apache-pack",
             "composer update",
             "php bin/console --no-interaction doctrine:schema:update"
         ]
