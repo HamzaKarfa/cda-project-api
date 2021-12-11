@@ -16,7 +16,7 @@ abstract class AbstractRequestTest extends ApiTestCase implements RequestTestInt
     {
         $this->httpClient = static::createClient();
 
-        $url = 'http://localhost:8000/';
+        $url = $_ENV['CURRENT_URL'];
          try {
              $response = $this->httpClient->request( $method , $url . $pathUrl, [
                      'headers' => [
