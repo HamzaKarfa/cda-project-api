@@ -84,14 +84,14 @@ class Order
     }
 
     /**
-     * @return OrderProduct[]
+     * @return Collection|OrderProduct[]
      */
-    public function getOrderProducts(): ArrayCollection
+    public function getOrderProducts(): Collection
     {
-        if($this->orderProducts instanceof PersistentCollection)
-        {
-            return $this->orderProducts->toArray();
-        }
+        // if($this->orderProducts instanceof PersistentCollection)
+        // {
+        //     return $this->orderProducts->toArray();
+        // }
         return $this->orderProducts;
     }
 
@@ -101,7 +101,6 @@ class Order
             $this->orderProducts[] = $orderProduct;
             $orderProduct->setOrderId($this);
         }
-
         return $this;
     }
 

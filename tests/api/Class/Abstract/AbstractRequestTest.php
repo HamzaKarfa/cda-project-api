@@ -38,7 +38,7 @@ abstract class AbstractRequestTest extends ApiTestCase implements RequestTestInt
             return $this->token;
         } else {
             $authUserData = [
-                'email'=>'hamza.karfa@gmail.com',
+                'email'=>'Basile@gmail.com',
                 'password'=>'123456'
             ];
             $response = $this->httpClientRequest('authentication_token','POST' , $authUserData, false);

@@ -27,5 +27,41 @@ class ProductCategoryFixtures extends Fixture
         }
         $manager->flush();
     }
+
+    public function contact(Request $request): Response
+    {
+        $defaultData = ['message' => 'Type your message here'];
+        $form = $this->createFormBuilder($defaultData)
+            ->add('nom', TextType::class)
+            ->add('prenom', TextType::class)
+            ->add('email', EmailType::class)
+            ->add('message', TextareaType::class)
+            ->add('send', SubmitType::class)
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // data is an array with "name", "email", and "message" keys
+            $data = $form->getData();
+            $email = (new TemplatedEmail())
+            ->from(new Address('basilesimplon@gmail.com', 'Basile Mail Bot'))
+            ->to('basilesimplon@gmail.com')
+            ->subject('Demande de devis')
+            ->htmlTemplate('devis/email.html.twig')
+            ->context([
+                'nom' => $data['nom'],
+                'prenom' => $data['prenom'],
+                'email' => $data['email'],
+                'message' => $data['message'],
+            ]);
+
+            $mailer->send($email);
+
+        }
+        
+
+        // ... render the form
+    }
 }
 

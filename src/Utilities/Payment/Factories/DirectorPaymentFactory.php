@@ -13,7 +13,7 @@ class DirectorPaymentFactory implements DirectorFactoryInterfaces
     public function __construct($type){ 
         $this->type = ucfirst($type);
     }
-    public function createPaymentFactory() :MethodPaymentFactoryInterface 
+    public function createPaymentFactory() : MethodPaymentFactoryInterface 
     {
         $factoryName = "App\Utilities\Payment\Factories\\" .ucfirst($this->type)."PaymentFactory";
         if (!class_exists($factoryName)) {
